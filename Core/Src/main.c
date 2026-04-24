@@ -32,6 +32,9 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+#define SET GPIO_PIN_SET
+#define RESET GPIO_PIN_RESET
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -90,6 +93,8 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+
+  //HC_UPDATE continue na A6 LED lijevo??
 
   /* USER CODE END 2 */
 
@@ -217,10 +222,16 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, Red_Pin|Blue_Pin|Green_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOA, LED_L4_Pin|Green_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED_L2_Pin|LD3_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LED_L3_Pin|LED_L5_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, Red_Pin|Blue_Pin|LED_L1_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin : A1_Button_Pin */
   GPIO_InitStruct.Pin = A1_Button_Pin;
@@ -228,19 +239,21 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(A1_Button_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Red_Pin Blue_Pin Green_Pin */
-  GPIO_InitStruct.Pin = Red_Pin|Blue_Pin|Green_Pin;
+  /*Configure GPIO pins : LED_L4_Pin Red_Pin Blue_Pin Green_Pin
+                           LED_L1_Pin */
+  GPIO_InitStruct.Pin = LED_L4_Pin|Red_Pin|Blue_Pin|Green_Pin
+                          |LED_L1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD3_Pin */
-  GPIO_InitStruct.Pin = LD3_Pin;
+  /*Configure GPIO pins : LED_L2_Pin LED_L3_Pin LD3_Pin LED_L5_Pin */
+  GPIO_InitStruct.Pin = LED_L2_Pin|LED_L3_Pin|LD3_Pin|LED_L5_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
