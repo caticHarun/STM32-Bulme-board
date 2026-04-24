@@ -94,7 +94,8 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  //HC_UPDATE continue na A6 LED lijevo??
+  uint32_t timestamp = HAL_GetTick();
+  int turn = 0;
 
   /* USER CODE END 2 */
 
@@ -102,6 +103,58 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  uint32_t current = HAL_GetTick();
+
+	  if(current - timestamp > 300){
+		  timestamp = current;
+
+		  HAL_GPIO_TogglePin(LED_L1_GPIO_Port, LED_L1_Pin);
+		  HAL_GPIO_TogglePin(LED_L2_GPIO_Port, LED_L2_Pin);
+		  HAL_GPIO_TogglePin(LED_L3_GPIO_Port, LED_L3_Pin);
+		  HAL_GPIO_TogglePin(LED_L4_GPIO_Port, LED_L4_Pin);
+		  HAL_GPIO_TogglePin(LED_L5_GPIO_Port, LED_L5_Pin);
+		  HAL_GPIO_TogglePin(LED_L6_GPIO_Port, LED_L6_Pin);
+		  HAL_GPIO_TogglePin(LED_L7_GPIO_Port, LED_L7_Pin);
+		  HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+
+		  if(turn == 0){
+			  HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
+			  HAL_GPIO_TogglePin(Red_GPIO_Port, Red_Pin);
+		  }
+		  if(turn == 1){
+			  HAL_GPIO_TogglePin(Red_GPIO_Port, Red_Pin);
+			  HAL_GPIO_TogglePin(Green_GPIO_Port, Green_Pin);
+		  }
+		  if(turn == 2){
+			  HAL_GPIO_TogglePin(Green_GPIO_Port, Green_Pin);
+			  HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
+		  }
+		  if(turn == 3){
+			  HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
+		  }
+
+      if(turn == 4){
+			  HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
+			  HAL_GPIO_TogglePin(Red_GPIO_Port, Red_Pin);
+		  }
+      if(turn == 5){
+			  HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
+			  HAL_GPIO_TogglePin(Green_GPIO_Port, Green_Pin);
+		  }
+
+      if(turn == 6){
+			  HAL_GPIO_TogglePin(Red_GPIO_Port, Red_Pin);
+			  HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
+		  }
+
+      if(turn == 7){
+			  HAL_GPIO_TogglePin(Green_GPIO_Port, Green_Pin);
+			  HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
+		  }
+
+		  turn = (turn+1)%8;
+	  }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
