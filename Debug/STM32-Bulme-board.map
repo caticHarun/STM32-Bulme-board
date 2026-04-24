@@ -178,7 +178,7 @@ Discarded input sections
  .debug_macro   0x00000000      0x5cf ./Core/Src/stm32l4xx_hal_msp.o
  .debug_macro   0x00000000       0x44 ./Core/Src/stm32l4xx_hal_msp.o
  .debug_macro   0x00000000      0x220 ./Core/Src/stm32l4xx_hal_msp.o
- .debug_macro   0x00000000       0xb8 ./Core/Src/stm32l4xx_hal_msp.o
+ .debug_macro   0x00000000       0xd0 ./Core/Src/stm32l4xx_hal_msp.o
  .group         0x00000000        0xc ./Core/Src/stm32l4xx_it.o
  .group         0x00000000        0xc ./Core/Src/stm32l4xx_it.o
  .group         0x00000000        0xc ./Core/Src/stm32l4xx_it.o
@@ -255,7 +255,7 @@ Discarded input sections
  .debug_macro   0x00000000      0x5cf ./Core/Src/stm32l4xx_it.o
  .debug_macro   0x00000000       0x44 ./Core/Src/stm32l4xx_it.o
  .debug_macro   0x00000000      0x220 ./Core/Src/stm32l4xx_it.o
- .debug_macro   0x00000000       0xb8 ./Core/Src/stm32l4xx_it.o
+ .debug_macro   0x00000000       0xd0 ./Core/Src/stm32l4xx_it.o
  .group         0x00000000        0xc ./Core/Src/syscalls.o
  .group         0x00000000        0xc ./Core/Src/syscalls.o
  .group         0x00000000        0xc ./Core/Src/syscalls.o
@@ -3246,7 +3246,7 @@ LOAD C:/ST/STM32CubeIDE_2.1.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.exte
  .debug_rnglists
                 0x00000511      0x1da ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart.o
 
-.debug_macro    0x00000000    0x1f1ff
+.debug_macro    0x00000000    0x1f217
  .debug_macro   0x00000000      0x1d6 ./Core/Src/main.o
  .debug_macro   0x000001d6      0xad8 ./Core/Src/main.o
  .debug_macro   0x00000cae      0x1a1 ./Core/Src/main.o
@@ -3283,49 +3283,49 @@ LOAD C:/ST/STM32CubeIDE_2.1.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.exte
  .debug_macro   0x0001d4b5      0x5cf ./Core/Src/main.o
  .debug_macro   0x0001da84       0x44 ./Core/Src/main.o
  .debug_macro   0x0001dac8      0x220 ./Core/Src/main.o
- .debug_macro   0x0001dce8       0xb8 ./Core/Src/main.o
- .debug_macro   0x0001dda0      0x1ca ./Core/Src/stm32l4xx_hal_msp.o
- .debug_macro   0x0001df6a      0x1d4 ./Core/Src/stm32l4xx_it.o
- .debug_macro   0x0001e13e      0x1bb ./Core/Src/system_stm32l4xx.o
- .debug_macro   0x0001e2f9      0x203 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.o
- .debug_macro   0x0001e4fc      0x1bb ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.o
- .debug_macro   0x0001e6b7      0x1c2 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.o
- .debug_macro   0x0001e879      0x1d3 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.o
- .debug_macro   0x0001ea4c      0x1df ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.o
- .debug_macro   0x0001ec2b      0x1fd ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.o
- .debug_macro   0x0001ee28      0x1f1 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.o
- .debug_macro   0x0001f019      0x1e6 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart.o
+ .debug_macro   0x0001dce8       0xd0 ./Core/Src/main.o
+ .debug_macro   0x0001ddb8      0x1ca ./Core/Src/stm32l4xx_hal_msp.o
+ .debug_macro   0x0001df82      0x1d4 ./Core/Src/stm32l4xx_it.o
+ .debug_macro   0x0001e156      0x1bb ./Core/Src/system_stm32l4xx.o
+ .debug_macro   0x0001e311      0x203 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.o
+ .debug_macro   0x0001e514      0x1bb ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.o
+ .debug_macro   0x0001e6cf      0x1c2 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.o
+ .debug_macro   0x0001e891      0x1d3 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.o
+ .debug_macro   0x0001ea64      0x1df ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.o
+ .debug_macro   0x0001ec43      0x1fd ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.o
+ .debug_macro   0x0001ee40      0x1f1 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.o
+ .debug_macro   0x0001f031      0x1e6 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart.o
 
-.debug_line     0x00000000     0xa8c8
- .debug_line    0x00000000      0x841 ./Core/Src/main.o
- .debug_line    0x00000841      0x7a3 ./Core/Src/stm32l4xx_hal_msp.o
- .debug_line    0x00000fe4      0x7df ./Core/Src/stm32l4xx_it.o
- .debug_line    0x000017c3      0x7ce ./Core/Src/system_stm32l4xx.o
- .debug_line    0x00001f91       0x7a ./Core/Startup/startup_stm32l432kcux.o
- .debug_line    0x0000200b      0xa9e ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.o
- .debug_line    0x00002aa9      0xcd1 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.o
- .debug_line    0x0000377a      0xb0d ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.o
- .debug_line    0x00004287      0x901 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.o
- .debug_line    0x00004b88      0xc1f ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.o
- .debug_line    0x000057a7     0x10d9 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.o
- .debug_line    0x00006880     0x135b ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.o
- .debug_line    0x00007bdb     0x2ced ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart.o
+.debug_line     0x00000000     0xa8cb
+ .debug_line    0x00000000      0x844 ./Core/Src/main.o
+ .debug_line    0x00000844      0x7a3 ./Core/Src/stm32l4xx_hal_msp.o
+ .debug_line    0x00000fe7      0x7df ./Core/Src/stm32l4xx_it.o
+ .debug_line    0x000017c6      0x7ce ./Core/Src/system_stm32l4xx.o
+ .debug_line    0x00001f94       0x7a ./Core/Startup/startup_stm32l432kcux.o
+ .debug_line    0x0000200e      0xa9e ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.o
+ .debug_line    0x00002aac      0xcd1 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.o
+ .debug_line    0x0000377d      0xb0d ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.o
+ .debug_line    0x0000428a      0x901 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.o
+ .debug_line    0x00004b8b      0xc1f ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.o
+ .debug_line    0x000057aa     0x10d9 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.o
+ .debug_line    0x00006883     0x135b ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.o
+ .debug_line    0x00007bde     0x2ced ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart.o
 
-.debug_str      0x00000000    0xbd007
- .debug_str     0x00000000    0xbd007 ./Core/Src/main.o
-                              0xba92e (size before relaxing)
- .debug_str     0x000bd007    0xba8b7 ./Core/Src/stm32l4xx_hal_msp.o
- .debug_str     0x000bd007    0xba11b ./Core/Src/stm32l4xx_it.o
- .debug_str     0x000bd007    0xba007 ./Core/Src/system_stm32l4xx.o
- .debug_str     0x000bd007       0x94 ./Core/Startup/startup_stm32l432kcux.o
- .debug_str     0x000bd007    0xba9a9 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.o
- .debug_str     0x000bd007    0xba767 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.o
- .debug_str     0x000bd007    0xba18d ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.o
- .debug_str     0x000bd007    0xba351 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.o
- .debug_str     0x000bd007    0xba4af ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.o
- .debug_str     0x000bd007    0xba607 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.o
- .debug_str     0x000bd007    0xba879 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.o
- .debug_str     0x000bd007    0xbad5f ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart.o
+.debug_str      0x00000000    0xbd061
+ .debug_str     0x00000000    0xbd061 ./Core/Src/main.o
+                              0xba988 (size before relaxing)
+ .debug_str     0x000bd061    0xba911 ./Core/Src/stm32l4xx_hal_msp.o
+ .debug_str     0x000bd061    0xba175 ./Core/Src/stm32l4xx_it.o
+ .debug_str     0x000bd061    0xba007 ./Core/Src/system_stm32l4xx.o
+ .debug_str     0x000bd061       0x94 ./Core/Startup/startup_stm32l432kcux.o
+ .debug_str     0x000bd061    0xba9a9 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.o
+ .debug_str     0x000bd061    0xba767 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.o
+ .debug_str     0x000bd061    0xba18d ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.o
+ .debug_str     0x000bd061    0xba351 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.o
+ .debug_str     0x000bd061    0xba4af ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.o
+ .debug_str     0x000bd061    0xba607 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.o
+ .debug_str     0x000bd061    0xba879 ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.o
+ .debug_str     0x000bd061    0xbad5f ./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart.o
 
 .comment        0x00000000       0x43
  .comment       0x00000000       0x43 ./Core/Src/main.o

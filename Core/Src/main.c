@@ -225,13 +225,13 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, LED_L4_Pin|Green_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_L2_Pin|LD3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED_L7_Pin|Red_Pin|Blue_Pin|LED_L1_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LED_L2_Pin|LD3_Pin|LED_L6_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LED_L3_Pin|LED_L5_Pin, GPIO_PIN_SET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, Red_Pin|Blue_Pin|LED_L1_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin : A1_Button_Pin */
   GPIO_InitStruct.Pin = A1_Button_Pin;
@@ -239,17 +239,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(A1_Button_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_L4_Pin Red_Pin Blue_Pin Green_Pin
-                           LED_L1_Pin */
-  GPIO_InitStruct.Pin = LED_L4_Pin|Red_Pin|Blue_Pin|Green_Pin
-                          |LED_L1_Pin;
+  /*Configure GPIO pins : LED_L4_Pin LED_L7_Pin Red_Pin Blue_Pin
+                           Green_Pin LED_L1_Pin */
+  GPIO_InitStruct.Pin = LED_L4_Pin|LED_L7_Pin|Red_Pin|Blue_Pin
+                          |Green_Pin|LED_L1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_L2_Pin LED_L3_Pin LD3_Pin LED_L5_Pin */
-  GPIO_InitStruct.Pin = LED_L2_Pin|LED_L3_Pin|LD3_Pin|LED_L5_Pin;
+  /*Configure GPIO pins : LED_L2_Pin LED_L3_Pin LD3_Pin LED_L6_Pin
+                           LED_L5_Pin */
+  GPIO_InitStruct.Pin = LED_L2_Pin|LED_L3_Pin|LD3_Pin|LED_L6_Pin
+                          |LED_L5_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

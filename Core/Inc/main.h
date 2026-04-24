@@ -65,6 +65,8 @@ void Error_Handler(void);
 #define VCP_TX_GPIO_Port GPIOA
 #define LED_L4_Pin GPIO_PIN_4
 #define LED_L4_GPIO_Port GPIOA
+#define LED_L7_Pin GPIO_PIN_7
+#define LED_L7_GPIO_Port GPIOA
 #define LED_L2_Pin GPIO_PIN_0
 #define LED_L2_GPIO_Port GPIOB
 #define LED_L3_Pin GPIO_PIN_1
@@ -85,6 +87,8 @@ void Error_Handler(void);
 #define VCP_RX_GPIO_Port GPIOA
 #define LD3_Pin GPIO_PIN_3
 #define LD3_GPIO_Port GPIOB
+#define LED_L6_Pin GPIO_PIN_4
+#define LED_L6_GPIO_Port GPIOB
 #define LED_L5_Pin GPIO_PIN_5
 #define LED_L5_GPIO_Port GPIOB
 
