@@ -258,12 +258,9 @@ int main(void)
 		if (a1_clicked)
 			print("Button %s\n", a1_clicked == 3 ? "double click" : a1_clicked == 1 ? "down" : "up");
 
-		if (a1_clicked == 1) //Pause Disco mode
+		if (a1_clicked == 1) //Off/On Disco mode
 		{
 			disco_mode = !disco_mode;
-		}
-		else if(a1_clicked == 3){
-			disco_mode = 0;
 			debug_left_LEDs(0);
 			toggle_main_LED(0,0,0);
 		}
