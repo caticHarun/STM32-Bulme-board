@@ -144,19 +144,34 @@ struct button addButton(
 	return btn;
 }
 
+/**
+ * Easier since intellisense gets this
+ * 
+ * @returns
+ * 	0 -> no click |
+ * 	1 -> down |
+ *  2 -> up |
+ *  3 -> double click |
+ */
 int button_click_check(struct button *btn)
-{ // 0->no click, 1->down; 2->up
+{ // 0 -> no click, 1 -> down; 2 -> up; 3 -> double click
 	int state = !!(HAL_GPIO_ReadPin(btn->port, btn->pin) == RESET);
 	if (state == btn->state)
 		return 0;
 
-	print("Button %s %i\n", state ? "down" : "up", HAL_GetTick() - btn->change_timestamp);
+	uint32_t current = HAL_GetTick();
+	uint32_t difference = current - btn->change_timestamp;
 
 	btn->state = state;
 	btn->change_timestamp = HAL_GetTick();
 
 	if (state == 1)
-		return 1;
+	{
+		if (difference < 80)
+			return 3;
+		else
+			return 1;
+	}
 	else
 		return 2;
 }
@@ -238,6 +253,9 @@ int main(void)
 		}
 
 		int a1_clicked = button_click_check(&a1);
+		if (a1_clicked)
+			print("Button %s\n", a1_clicked == 3 ? "double click" : a1_clicked == 1 ? "down" : "up");
+
 		if (a1_clicked == 1)
 		{
 			disco_mode = !disco_mode;
