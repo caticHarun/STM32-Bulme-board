@@ -21,7 +21,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,7 +33,7 @@
 
 #define SET GPIO_PIN_SET
 #define RESET GPIO_PIN_RESET
-#define CLOCK 300
+#define HAL_MAX_TIMEOUT 1000
 
 /* USER CODE END PD */
 
@@ -47,6 +46,12 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+
+struct button
+{
+	int state;
+	uint32_t change_timestamp;
+};
 
 /* USER CODE END PV */
 
@@ -103,6 +108,8 @@ int main(void)
 
 	/* USER CODE BEGIN 1 */
 
+	int disco_timeout = 300;
+
 	int disco_lights[][3] = {
 		// [Red, Green, Blue]
 		{0, 0, 0},
@@ -114,6 +121,10 @@ int main(void)
 		{1, 1, 0},
 		{1, 1, 1}};
 	int disco_lights_length = 8;
+
+	struct button a1;
+	a1.state = 0;
+	a1.change_timestamp = HAL_GetTick();
 
 	/* USER CODE END 1 */
 
@@ -151,29 +162,43 @@ int main(void)
 	{
 		uint32_t current = HAL_GetTick();
 
-		if ((current - timestamp) > CLOCK)
+		if ((current - timestamp) > disco_timeout)
 		{
 			timestamp = current;
 			// toggle_left_LEDs(); //HC_UPDATE uncomment
-			// toggle_main_LED( //HC_UPDATE uncomment
-			// 	disco_lights[turn][0],
-			// 	disco_lights[turn][1],
-			// 	disco_lights[turn][2]
-			// );
+			toggle_main_LED( //HC_UPDATE uncomment
+				disco_lights[turn][0],
+				disco_lights[turn][1],
+				disco_lights[turn][2]
+			);
 			turn = (turn + 1) % disco_lights_length;
 		}
 
-		GPIO_PinState a1 = HAL_GPIO_ReadPin(A1_Button_GPIO_Port, A1_Button_Pin);
-		if (a1 == RESET)
-		{ // HC_UPDATE continue
-			debug_left_LEDs(1);
-			toggle_main_LED(1, 1, 1);
+		GPIO_PinState a1_state = HAL_GPIO_ReadPin(A1_Button_GPIO_Port, A1_Button_Pin) == RESET;
+		if(a1_state != a1.state){
+			a1.state = a1_state;
+			a1.change_timestamp = HAL_GetTick();
+
+			if(a1_state){
+				uint8_t message[] = "Harun, button state = 1";
+				HAL_UART_Transmit(&huart2, message, sizeof(message) - 1, HAL_MAX_TIMEOUT);
+			}
+			else {
+				uint8_t message[] = "Harun, button state = 0";
+				HAL_UART_Transmit(&huart2, message, sizeof(message) - 1, HAL_MAX_TIMEOUT);
+			}
 		}
-		else
-		{
-			debug_left_LEDs(0);
-			toggle_main_LED(1, 0, 0);
-		}
+
+		// if (a1 == RESET)
+		// { // HC_UPDATE continue
+		// 	debug_left_LEDs(1);
+		// 	toggle_main_LED(1, 1, 1);
+		// }
+		// else
+		// {
+		// 	debug_left_LEDs(0);
+		// 	toggle_main_LED(1, 0, 0);
+		// }
 
 		/* USER CODE END WHILE */
 
