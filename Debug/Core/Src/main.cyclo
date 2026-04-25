@@ -1,8 +1,8 @@
 ../Core/Src/main.c:64:6:toggle_left_LEDs	1
 ../Core/Src/main.c:76:6:toggle_main_LED	1
 ../Core/Src/main.c:83:6:debug_left_LEDs	1
-../Core/Src/main.c:100:5:main	2
-../Core/Src/main.c:177:6:SystemClock_Config	4
-../Core/Src/main.c:238:13:MX_USART2_UART_Init	2
-../Core/Src/main.c:273:13:MX_GPIO_Init	1
-../Core/Src/main.c:335:6:Error_Handler	1
+../Core/Src/main.c:100:5:main	3
+../Core/Src/main.c:187:6:SystemClock_Config	4
+../Core/Src/main.c:248:13:MX_USART2_UART_Init	2
+../Core/Src/main.c:283:13:MX_GPIO_Init	1
+../Core/Src/main.c:345:6:Error_Handler	1

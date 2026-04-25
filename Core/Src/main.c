@@ -163,6 +163,16 @@ int main(void)
 			turn = (turn + 1) % disco_lights_length;
 		}
 
+		GPIO_PinState a1 = HAL_GPIO_ReadPin(A1_Button_GPIO_Port, A1_Button_Pin);
+		if(a1 == RESET){ //HC_UPDATE continue
+			debug_left_LEDs(1);
+			toggle_main_LED(1,1,1);
+		}
+		else {
+			debug_left_LEDs(0);
+			toggle_main_LED(1,0,0);
+		}
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -298,7 +308,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : A1_Button_Pin */
   GPIO_InitStruct.Pin = A1_Button_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(A1_Button_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED_L7_Pin LED_L4_Pin Red_Pin Blue_Pin
