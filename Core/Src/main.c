@@ -98,16 +98,16 @@ int print(const char *fmt, ...)
 }
 
 // LED Edits
-void toggle_left_LEDs(int turn)
+void toggle_left_LEDs(int even)
 {
-	HAL_GPIO_WritePin(LED_L1_GPIO_Port, LED_L1_Pin, turn % 2 == 0 ? SET : RESET);
-	HAL_GPIO_WritePin(LED_L2_GPIO_Port, LED_L2_Pin, turn % 2 != 0 ? SET : RESET);
-	HAL_GPIO_WritePin(LED_L3_GPIO_Port, LED_L3_Pin, turn % 2 == 0 ? SET : RESET);
-	HAL_GPIO_WritePin(LED_L4_GPIO_Port, LED_L4_Pin, turn % 2 != 0 ? SET : RESET);
-	HAL_GPIO_WritePin(LED_L5_GPIO_Port, LED_L5_Pin, turn % 2 == 0 ? SET : RESET);
-	HAL_GPIO_WritePin(LED_L6_GPIO_Port, LED_L6_Pin, turn % 2 != 0 ? SET : RESET);
-	HAL_GPIO_WritePin(LED_L7_GPIO_Port, LED_L7_Pin, turn % 2 == 0 ? SET : RESET);
-	HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, turn % 2 != 0 ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L1_GPIO_Port, LED_L1_Pin, even ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L2_GPIO_Port, LED_L2_Pin, !even ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L3_GPIO_Port, LED_L3_Pin, even ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L4_GPIO_Port, LED_L4_Pin, !even ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L5_GPIO_Port, LED_L5_Pin, even ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L6_GPIO_Port, LED_L6_Pin, !even ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L7_GPIO_Port, LED_L7_Pin, even ? SET : RESET);
+	HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, !even ? SET : RESET);
 }
 
 void toggle_main_LED(int red, int green, int blue)
@@ -146,7 +146,7 @@ struct button addButton(
 
 /**
  * Easier since intellisense gets this
- * 
+ *
  * @returns
  * 	0 -> no click |
  * 	1 -> down |
@@ -213,7 +213,8 @@ int main(void)
 	/* USER CODE BEGIN 2 */
 
 	// Setters
-	int disco_timeout = 300;
+	const int disco_timeout = 100;
+	int disco_speed = 1;
 	int disco_lights[][3] = {
 		// [Red, Green, Blue]
 		{0, 0, 1},
@@ -230,9 +231,13 @@ int main(void)
 	struct button a1 = addButton(
 		A1_Button_GPIO_Port,
 		A1_Button_Pin);
+	struct button a2 = addButton(
+		A2_Button_GPIO_Port,
+		A2_Button_Pin);
 
 	// Disco
-	int turn = 0;
+	int disco_rgb_mode = 0;
+	int disco_even = 0;
 	int disco_mode = 1;
 
 	/* USER CODE END 2 */
@@ -243,38 +248,34 @@ int main(void)
 	{
 		uint32_t current = HAL_GetTick();
 
-		if ((current - timestamp) > disco_timeout && disco_mode)
+		if ((current - timestamp) > (disco_timeout * disco_speed) && disco_mode)
 		{
 			timestamp = current;
-			toggle_left_LEDs(turn); // HC_UPDATE uncomment
-			toggle_main_LED(		// HC_UPDATE uncomment
-				disco_lights[turn][0],
-				disco_lights[turn][1],
-				disco_lights[turn][2]);
-			turn = (turn + 1) % disco_lights_length;
+			toggle_left_LEDs(disco_even); // HC_UPDATE uncomment
+			toggle_main_LED(			  // HC_UPDATE uncomment
+				disco_lights[disco_rgb_mode][0],
+				disco_lights[disco_rgb_mode][1],
+				disco_lights[disco_rgb_mode][2]
+			);
+			disco_rgb_mode = (disco_rgb_mode + 1) % disco_lights_length;
+			disco_even = !disco_even;
 		}
 
+		// ON / OFF
 		int a1_clicked = button_click_check(&a1);
-		if (a1_clicked)
-			print("Button %s\n", a1_clicked == 3 ? "double click" : a1_clicked == 1 ? "down" : "up");
-
-		if (a1_clicked == 1) //Off/On Disco mode
+		if (a1_clicked == 1) // Off/On Disco mode
 		{
 			disco_mode = !disco_mode;
 			debug_left_LEDs(0);
-			toggle_main_LED(0,0,0);
+			toggle_main_LED(0, 0, 0);
 		}
 
-		// if (a1 == RESET)
-		// { // HC_UPDATE continue
-		// 	debug_left_LEDs(1);
-		// 	toggle_main_LED(1, 1, 1);
-		// }
-		// else
-		// {
-		// 	debug_left_LEDs(0);
-		// 	toggle_main_LED(1, 0, 0);
-		// }
+		// Speed
+		int a2_clicked = button_click_check(&a2);
+		if (a2_clicked == 1)
+		{
+			disco_speed = (disco_speed % 4) + 1;
+		}
 
 		/* USER CODE END WHILE */
 
@@ -402,11 +403,11 @@ static void MX_GPIO_Init(void)
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOA, Red_Pin | Blue_Pin | Green_Pin, GPIO_PIN_SET);
 
-	/*Configure GPIO pin : A1_Button_Pin */
-	GPIO_InitStruct.Pin = A1_Button_Pin;
+	/*Configure GPIO pins : A1_Button_Pin A2_Button_Pin */
+	GPIO_InitStruct.Pin = A1_Button_Pin | A2_Button_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(A1_Button_GPIO_Port, &GPIO_InitStruct);
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 	/*Configure GPIO pins : LED_L7_Pin LED_L4_Pin Red_Pin Blue_Pin
 							 Green_Pin LED_L1_Pin */
