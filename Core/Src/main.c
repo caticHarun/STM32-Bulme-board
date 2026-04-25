@@ -34,6 +34,7 @@
 
 #define SET GPIO_PIN_SET
 #define RESET GPIO_PIN_RESET
+#define CLOCK 300
 
 /* USER CODE END PD */
 
@@ -55,7 +56,12 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
-void toggleLeftLEDs()
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+void toggle_left_LEDs()
 {
 	HAL_GPIO_TogglePin(LED_L1_GPIO_Port, LED_L1_Pin);
 	HAL_GPIO_TogglePin(LED_L2_GPIO_Port, LED_L2_Pin);
@@ -67,10 +73,12 @@ void toggleLeftLEDs()
 	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 }
 
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
+void toggle_main_LED(int red, int green, int blue)
+{
+	HAL_GPIO_WritePin(Red_GPIO_Port, Red_Pin, red ? RESET : SET);
+	HAL_GPIO_WritePin(Green_GPIO_Port, Green_Pin, green ? RESET : SET);
+	HAL_GPIO_WritePin(Blue_GPIO_Port, Blue_Pin, blue ? RESET : SET);
+}
 
 /* USER CODE END 0 */
 
@@ -82,6 +90,19 @@ int main(void)
 {
 
 	/* USER CODE BEGIN 1 */
+
+	int disco_lights[][3] = {
+		// [Red, Green, Blue]
+		{0,0,0},
+		{0,0,1},
+		{0,1,0},
+		{0,1,1},
+		{1,0,0},
+		{1,0,1},
+		{1,1,0},
+		{1,1,1}
+	};
+	int disco_lights_length = 8;
 
 	/* USER CODE END 1 */
 
@@ -117,56 +138,16 @@ int main(void)
 	{
 		uint32_t current = HAL_GetTick();
 
-		if (current - timestamp > 300)
+		if ((current - timestamp) > CLOCK)
 		{
 			timestamp = current;
-
-			toggleLeftLEDs();
-
-			if (turn == 0)
-			{
-				HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
-				HAL_GPIO_TogglePin(Red_GPIO_Port, Red_Pin);
-			}
-			if (turn == 1)
-			{
-				HAL_GPIO_TogglePin(Red_GPIO_Port, Red_Pin);
-				HAL_GPIO_TogglePin(Green_GPIO_Port, Green_Pin);
-			}
-			if (turn == 2)
-			{
-				HAL_GPIO_TogglePin(Green_GPIO_Port, Green_Pin);
-				HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
-			}
-			if (turn == 3)
-			{
-				HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
-			}
-
-			if (turn == 4)
-			{
-				HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
-				HAL_GPIO_TogglePin(Red_GPIO_Port, Red_Pin);
-			}
-			if (turn == 5)
-			{
-				HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
-				HAL_GPIO_TogglePin(Green_GPIO_Port, Green_Pin);
-			}
-
-			if (turn == 6)
-			{
-				HAL_GPIO_TogglePin(Red_GPIO_Port, Red_Pin);
-				HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
-			}
-
-			if (turn == 7)
-			{
-				HAL_GPIO_TogglePin(Green_GPIO_Port, Green_Pin);
-				HAL_GPIO_TogglePin(Blue_GPIO_Port, Blue_Pin);
-			}
-
-			turn = (turn + 1) % 8;
+			toggle_left_LEDs();
+			toggle_main_LED(
+				disco_lights[turn][0],
+				disco_lights[turn][1],
+				disco_lights[turn][2]
+			);
+			turn = (turn + 1) % disco_lights_length;
 		}
 
 		/* USER CODE END WHILE */
