@@ -21,6 +21,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -69,6 +74,28 @@ static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN 0 */
 
 // Helpers
+int print(const char *fmt, ...)
+{
+	char buffer[256];
+
+	va_list args;
+	va_start(args, fmt);
+	int len = vsnprintf(buffer, sizeof(buffer), fmt, args);
+	va_end(args);
+
+	if (len < 0)
+	{
+		return len;
+	}
+
+	if (len > sizeof(buffer))
+	{
+		len = sizeof(buffer);
+	}
+
+	HAL_UART_Transmit(&huart2, (uint8_t *)buffer, len, HAL_MAX_DELAY);
+	return len;
+}
 
 // LED Edits
 void toggle_left_LEDs(int turn)
@@ -123,7 +150,10 @@ int button_click_check(struct button *btn)
 	if (state == btn->state)
 		return 0;
 
+	print("Button %s %i\n", state ? "down" : "up", HAL_GetTick() - btn->change_timestamp);
+
 	btn->state = state;
+	btn->change_timestamp = HAL_GetTick();
 
 	if (state == 1)
 		return 1;
@@ -211,8 +241,6 @@ int main(void)
 		if (a1_clicked == 1)
 		{
 			disco_mode = !disco_mode;
-			uint8_t message[] = "Button down\n";
-			HAL_UART_Transmit(&huart2, message, sizeof(message) - 1, HAL_MAX_TIMEOUT);
 		}
 
 		// if (a1 == RESET)
