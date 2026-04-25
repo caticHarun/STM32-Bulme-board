@@ -1,7 +1,8 @@
 ../Core/Src/main.c:64:6:toggle_left_LEDs	8	static
 ../Core/Src/main.c:76:6:toggle_main_LED	24	static
-../Core/Src/main.c:89:5:main	120	static
-../Core/Src/main.c:164:6:SystemClock_Config	96	static
-../Core/Src/main.c:225:13:MX_USART2_UART_Init	8	static
-../Core/Src/main.c:260:13:MX_GPIO_Init	40	static
-../Core/Src/main.c:321:6:Error_Handler	4	static,ignoring_inline_asm
+../Core/Src/main.c:83:6:debug_left_LEDs	16	static
+../Core/Src/main.c:100:5:main	120	static
+../Core/Src/main.c:177:6:SystemClock_Config	96	static
+../Core/Src/main.c:238:13:MX_USART2_UART_Init	8	static
+../Core/Src/main.c:273:13:MX_GPIO_Init	40	static
+../Core/Src/main.c:335:6:Error_Handler	4	static,ignoring_inline_asm

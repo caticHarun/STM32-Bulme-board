@@ -80,6 +80,17 @@ void toggle_main_LED(int red, int green, int blue)
 	HAL_GPIO_WritePin(Blue_GPIO_Port, Blue_Pin, blue ? RESET : SET);
 }
 
+void debug_left_LEDs(int on){
+	HAL_GPIO_WritePin(LED_L1_GPIO_Port, LED_L1_Pin, on ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L2_GPIO_Port, LED_L2_Pin, on ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L3_GPIO_Port, LED_L3_Pin, on ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L4_GPIO_Port, LED_L4_Pin, on ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L5_GPIO_Port, LED_L5_Pin, on ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L6_GPIO_Port, LED_L6_Pin, on ? SET : RESET);
+	HAL_GPIO_WritePin(LED_L7_GPIO_Port, LED_L7_Pin, on ? SET : RESET);
+	HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, on ? SET : RESET);
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -130,6 +141,8 @@ int main(void)
 	uint32_t timestamp = HAL_GetTick();
 	int turn = 0;
 
+	debug_left_LEDs(0); //HC_REMOVE
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -141,12 +154,12 @@ int main(void)
 		if ((current - timestamp) > CLOCK)
 		{
 			timestamp = current;
-			toggle_left_LEDs();
-			toggle_main_LED(
-				disco_lights[turn][0],
-				disco_lights[turn][1],
-				disco_lights[turn][2]
-			);
+			// toggle_left_LEDs(); //HC_UPDATE uncomment
+			// toggle_main_LED( //HC_UPDATE uncomment
+			// 	disco_lights[turn][0],
+			// 	disco_lights[turn][1],
+			// 	disco_lights[turn][2]
+			// );
 			turn = (turn + 1) % disco_lights_length;
 		}
 
@@ -270,7 +283,8 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED_L7_Pin|Red_Pin|Blue_Pin|LED_L1_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOA, LED_L7_Pin|Red_Pin|Blue_Pin|Green_Pin
+                          |LED_L1_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LED_L2_Pin|LD3_Pin|LED_L6_Pin, GPIO_PIN_RESET);
@@ -279,7 +293,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, LED_L3_Pin|LED_L5_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED_L4_Pin|Green_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_L4_GPIO_Port, LED_L4_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : A1_Button_Pin */
   GPIO_InitStruct.Pin = A1_Button_Pin;
