@@ -165,9 +165,11 @@ int button_click_check(struct button *btn)
 	btn->state = state;
 	btn->change_timestamp = HAL_GetTick();
 
+	print("Diff %i\n", difference);
+
 	if (state == 1)
 	{
-		if (difference < 80)
+		if (difference < 150)
 			return 3;
 		else
 			return 1;
