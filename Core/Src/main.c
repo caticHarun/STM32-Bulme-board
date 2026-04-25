@@ -39,6 +39,8 @@
 #define SET GPIO_PIN_SET
 #define RESET GPIO_PIN_RESET
 #define HAL_MAX_TIMEOUT 1000
+#define true 1
+#define false 0
 
 /* USER CODE END PD */
 
@@ -274,6 +276,7 @@ int main(void)
 		int a2_clicked = button_click_check(&a2);
 		if (a2_clicked == 1)
 		{
+			disco_mode = true;
 			disco_speed = (disco_speed % 4) + 1;
 		}
 
