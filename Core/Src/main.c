@@ -50,6 +50,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+TIM_HandleTypeDef htim1;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -68,6 +70,7 @@ struct button
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -99,6 +102,16 @@ int print(const char *fmt, ...)
 	return len;
 }
 
+int bigger(int a, int b)
+{
+	return a > b ? a : b;
+}
+
+int smaller(int a, int b)
+{
+	return a < b ? a : b;
+}
+
 // LED Edits
 void toggle_left_LEDs(int even)
 {
@@ -112,11 +125,32 @@ void toggle_left_LEDs(int even)
 	HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, !even ? SET : RESET);
 }
 
-void toggle_main_LED(int red, int green, int blue)
+void toggle_main_LED(int red, int green, int blue) // Percentages
 {
-	HAL_GPIO_WritePin(Red_GPIO_Port, Red_Pin, red ? RESET : SET);
-	HAL_GPIO_WritePin(Green_GPIO_Port, Green_Pin, green ? RESET : SET);
-	HAL_GPIO_WritePin(Blue_GPIO_Port, Blue_Pin, blue ? RESET : SET);
+	if (!red)
+		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+	else
+		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+
+	if (!green)
+		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_4);
+	else
+		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+
+	if (!blue)
+		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_3);
+	else
+		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+
+	int period = 999;
+	int one = (period / 100);
+	int r = period - one * red;
+	int g = period - one * green;
+	int b = period - one * blue;
+
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, r);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, g);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, b);
 }
 
 void debug_left_LEDs(int on)
@@ -180,6 +214,28 @@ int button_click_check(struct button *btn)
 		return 2;
 }
 
+void default_disco_lights(int disco_lights_hard[][3], int *disco_lights_length)
+{
+	*disco_lights_length = 7;
+	int dpl = 20; // Disco light percentage
+
+	int t[][3] = {
+		{0, 0, dpl},
+		{0, dpl, 0},
+		{0, dpl, dpl},
+		{dpl, 0, 0},
+		{dpl, 0, dpl},
+		{dpl, dpl, 0},
+		{dpl, dpl, dpl},
+	};
+
+	for(int i=0; i<*disco_lights_length; i++){
+		for(int j=0; j<3; j++){
+			disco_lights_hard[i][j] = t[i][j];
+		}
+	}
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -212,21 +268,14 @@ int main(void)
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	MX_USART2_UART_Init();
+	MX_TIM1_Init();
 	/* USER CODE BEGIN 2 */
 
 	// Setters
 	const int disco_timeout = 100;
 	int disco_speed = 1;
-	int disco_lights[][3] = {
-		// [Red, Green, Blue]
-		{0, 0, 1},
-		{0, 1, 0},
-		{0, 1, 1},
-		{1, 0, 0},
-		{1, 0, 1},
-		{1, 1, 0},
-		{1, 1, 1}};
-	int disco_lights_length = 7;
+	int disco_lights_hard[256 * 3][3];
+	int disco_lights_length = 0;
 	uint32_t timestamp = HAL_GetTick();
 
 	// Buttons
@@ -241,6 +290,7 @@ int main(void)
 	int disco_rgb_mode = 0;
 	int disco_even = 0;
 	int disco_mode = 1;
+	default_disco_lights(disco_lights_hard, &disco_lights_length);
 
 	/* USER CODE END 2 */
 
@@ -255,10 +305,9 @@ int main(void)
 			timestamp = current;
 			toggle_left_LEDs(disco_even); // HC_UPDATE uncomment
 			toggle_main_LED(			  // HC_UPDATE uncomment
-				disco_lights[disco_rgb_mode][0],
-				disco_lights[disco_rgb_mode][1],
-				disco_lights[disco_rgb_mode][2]
-			);
+				disco_lights_hard[disco_rgb_mode][0],
+				disco_lights_hard[disco_rgb_mode][1],
+				disco_lights_hard[disco_rgb_mode][2]);
 			disco_rgb_mode = (disco_rgb_mode + 1) % disco_lights_length;
 			disco_even = !disco_even;
 		}
@@ -347,6 +396,93 @@ void SystemClock_Config(void)
 }
 
 /**
+ * @brief TIM1 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_TIM1_Init(void)
+{
+
+	/* USER CODE BEGIN TIM1_Init 0 */
+
+	/* USER CODE END TIM1_Init 0 */
+
+	TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+	TIM_MasterConfigTypeDef sMasterConfig = {0};
+	TIM_OC_InitTypeDef sConfigOC = {0};
+	TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
+
+	/* USER CODE BEGIN TIM1_Init 1 */
+
+	/* USER CODE END TIM1_Init 1 */
+	htim1.Instance = TIM1;
+	htim1.Init.Prescaler = 0;
+	htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+	htim1.Init.Period = 999;
+	htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	htim1.Init.RepetitionCounter = 0;
+	htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+	if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
+	{
+		Error_Handler();
+	}
+	sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+	if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
+	{
+		Error_Handler();
+	}
+	if (HAL_TIM_PWM_Init(&htim1) != HAL_OK)
+	{
+		Error_Handler();
+	}
+	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+	sMasterConfig.MasterOutputTrigger2 = TIM_TRGO2_RESET;
+	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+	if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
+	{
+		Error_Handler();
+	}
+	sConfigOC.OCMode = TIM_OCMODE_PWM1;
+	sConfigOC.Pulse = 0;
+	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+	sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+	sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+	if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+	{
+		Error_Handler();
+	}
+	if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+	{
+		Error_Handler();
+	}
+	if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
+	{
+		Error_Handler();
+	}
+	sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+	sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+	sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+	sBreakDeadTimeConfig.DeadTime = 0;
+	sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+	sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+	sBreakDeadTimeConfig.BreakFilter = 0;
+	sBreakDeadTimeConfig.Break2State = TIM_BREAK2_DISABLE;
+	sBreakDeadTimeConfig.Break2Polarity = TIM_BREAK2POLARITY_HIGH;
+	sBreakDeadTimeConfig.Break2Filter = 0;
+	sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+	if (HAL_TIMEx_ConfigBreakDeadTime(&htim1, &sBreakDeadTimeConfig) != HAL_OK)
+	{
+		Error_Handler();
+	}
+	/* USER CODE BEGIN TIM1_Init 2 */
+
+	/* USER CODE END TIM1_Init 2 */
+	HAL_TIM_MspPostInit(&htim1);
+}
+
+/**
  * @brief USART2 Initialization Function
  * @param None
  * @retval None
@@ -403,18 +539,14 @@ static void MX_GPIO_Init(void)
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOB, LED_L2_Pin | LED_L3_Pin | LD3_Pin | LED_L6_Pin | LED_L5_Pin, GPIO_PIN_RESET);
 
-	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOA, Red_Pin | Blue_Pin | Green_Pin, GPIO_PIN_SET);
-
 	/*Configure GPIO pins : A1_Button_Pin A2_Button_Pin */
 	GPIO_InitStruct.Pin = A1_Button_Pin | A2_Button_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-	/*Configure GPIO pins : LED_L7_Pin LED_L4_Pin Red_Pin Blue_Pin
-							 Green_Pin LED_L1_Pin */
-	GPIO_InitStruct.Pin = LED_L7_Pin | LED_L4_Pin | Red_Pin | Blue_Pin | Green_Pin | LED_L1_Pin;
+	/*Configure GPIO pins : LED_L7_Pin LED_L4_Pin LED_L1_Pin */
+	GPIO_InitStruct.Pin = LED_L7_Pin | LED_L4_Pin | LED_L1_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
