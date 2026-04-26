@@ -229,11 +229,49 @@ void default_disco_lights(int disco_lights_hard[][3], int *disco_lights_length)
 		{dpl, dpl, dpl},
 	};
 
-	for(int i=0; i<*disco_lights_length; i++){
-		for(int j=0; j<3; j++){
+	for (int i = 0; i < *disco_lights_length; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
 			disco_lights_hard[i][j] = t[i][j];
 		}
 	}
+}
+
+void transition_disco_lights(int disco_lights_hard[][3], int *disco_lights_length, int speed)
+{
+	int index = 0;
+
+	int max_w = 100 / speed;
+
+	// Red -> Green
+	for (int i = 0; i < max_w; i++)
+	{
+		disco_lights_hard[index][0] = max_w - i; // R
+		disco_lights_hard[index][1] = i;		 // G
+		disco_lights_hard[index][2] = 0;		 // B
+		index++;
+	}
+
+	// Green -> Blue
+	for (int i = 0; i < max_w; i++)
+	{
+		disco_lights_hard[index][0] = 0;		 // R
+		disco_lights_hard[index][1] = max_w - i; // G
+		disco_lights_hard[index][2] = i;		 // B
+		index++;
+	}
+
+	// Blue -> Red
+	for (int i = 0; i < max_w; i++)
+	{
+		disco_lights_hard[index][0] = i;		 // R
+		disco_lights_hard[index][1] = 0;		 // G
+		disco_lights_hard[index][2] = max_w - i; // B
+		index++;
+	}
+
+	*disco_lights_length = index;
 }
 
 /* USER CODE END 0 */
@@ -287,10 +325,11 @@ int main(void)
 		A2_Button_Pin);
 
 	// Disco
-	int disco_rgb_mode = 0;
-	int disco_even = 0;
-	int disco_mode = 1;
+	int disco_rgb_mode = false;
+	int disco_even = false;
+	int disco_mode = true;
 	default_disco_lights(disco_lights_hard, &disco_lights_length);
+	int disco_left_leds = true;
 
 	/* USER CODE END 2 */
 
@@ -303,8 +342,9 @@ int main(void)
 		if ((current - timestamp) > (disco_timeout * disco_speed) && disco_mode)
 		{
 			timestamp = current;
-			toggle_left_LEDs(disco_even); // HC_UPDATE uncomment
-			toggle_main_LED(			  // HC_UPDATE uncomment
+			if (disco_left_leds)
+				toggle_left_LEDs(disco_even); // HC_UPDATE uncomment
+			toggle_main_LED(				  // HC_UPDATE uncomment
 				disco_lights_hard[disco_rgb_mode][0],
 				disco_lights_hard[disco_rgb_mode][1],
 				disco_lights_hard[disco_rgb_mode][2]);
@@ -319,14 +359,24 @@ int main(void)
 			disco_mode = !disco_mode;
 			debug_left_LEDs(0);
 			toggle_main_LED(0, 0, 0);
+			disco_speed = 1;
 		}
 
 		// Speed
 		int a2_clicked = button_click_check(&a2);
 		if (a2_clicked == 1)
 		{
+			default_disco_lights(disco_lights_hard, &disco_lights_length);
+			disco_left_leds = true;
 			disco_mode = true;
 			disco_speed = (disco_speed % 4) + 1;
+		}
+		if (a2_clicked == 3)
+		{
+			debug_left_LEDs(0);
+			disco_left_leds = false;
+			disco_speed = 1;
+			transition_disco_lights(disco_lights_hard, &disco_lights_length, 10);
 		}
 
 		/* USER CODE END WHILE */
