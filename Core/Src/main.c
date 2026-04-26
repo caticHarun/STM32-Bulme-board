@@ -50,6 +50,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
+
 TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart2;
@@ -71,6 +73,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM1_Init(void);
+static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -201,8 +204,6 @@ int button_click_check(struct button *btn)
 	btn->state = state;
 	btn->change_timestamp = HAL_GetTick();
 
-	print("Diff %i\n", difference);
-
 	if (state == 1)
 	{
 		if (difference < 150)
@@ -307,13 +308,16 @@ int main(void)
 	MX_GPIO_Init();
 	MX_USART2_UART_Init();
 	MX_TIM1_Init();
+	MX_ADC1_Init();
 	/* USER CODE BEGIN 2 */
 
 	// Setters
+	HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
 	const int disco_timeout = 100;
 	int disco_speed = 1;
 	int disco_lights_hard[256 * 3][3];
 	int disco_lights_length = 0;
+	default_disco_lights(disco_lights_hard, &disco_lights_length);
 	uint32_t timestamp = HAL_GetTick();
 
 	// Buttons
@@ -325,11 +329,12 @@ int main(void)
 		A2_Button_Pin);
 
 	// Disco
-	int disco_rgb_mode = false;
+	int disco_rgb_mode = 0; // Count
 	int disco_even = false;
-	int disco_mode = true;
-	default_disco_lights(disco_lights_hard, &disco_lights_length);
-	int disco_left_leds = true;
+	int on = true;
+	int smooth_speed = 1;
+	const int max_smooth_speed = 100;
+	int smooth = false;
 
 	/* USER CODE END 2 */
 
@@ -339,12 +344,15 @@ int main(void)
 	{
 		uint32_t current = HAL_GetTick();
 
-		if ((current - timestamp) > (disco_timeout * disco_speed) && disco_mode)
+		if ((current - timestamp) > (disco_timeout * disco_speed) && on)
 		{
 			timestamp = current;
-			if (disco_left_leds)
-				toggle_left_LEDs(disco_even); // HC_UPDATE uncomment
-			toggle_main_LED(				  // HC_UPDATE uncomment
+			if (!smooth)
+				toggle_left_LEDs(disco_even);
+			else
+				transition_disco_lights(disco_lights_hard, &disco_lights_length, smooth_speed);
+
+			toggle_main_LED(
 				disco_lights_hard[disco_rgb_mode][0],
 				disco_lights_hard[disco_rgb_mode][1],
 				disco_lights_hard[disco_rgb_mode][2]);
@@ -356,27 +364,45 @@ int main(void)
 		int a1_clicked = button_click_check(&a1);
 		if (a1_clicked == 1) // Off/On Disco mode
 		{
-			disco_mode = !disco_mode;
+			on = !on;
 			debug_left_LEDs(0);
 			toggle_main_LED(0, 0, 0);
 			disco_speed = 1;
+			if (on)
+			{
+				smooth = false;
+				default_disco_lights(disco_lights_hard, &disco_lights_length);
+			}
 		}
 
-		// Speed
+		// Speed and Smooth color transition
 		int a2_clicked = button_click_check(&a2);
 		if (a2_clicked == 1)
 		{
 			default_disco_lights(disco_lights_hard, &disco_lights_length);
-			disco_left_leds = true;
-			disco_mode = true;
+			smooth = false;
+			on = true;
 			disco_speed = (disco_speed % 4) + 1;
 		}
 		if (a2_clicked == 3)
 		{
 			debug_left_LEDs(0);
-			disco_left_leds = false;
+			smooth = true;
 			disco_speed = 1;
-			transition_disco_lights(disco_lights_hard, &disco_lights_length, 10);
+		}
+
+		// Speed for color transition
+		if (smooth)
+		{
+			HAL_ADC_Start(&hadc1);
+			if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_TIMEOUT) == HAL_OK)
+			{
+				uint32_t pot_value = HAL_ADC_GetValue(&hadc1);
+
+				int percentage = (pot_value / 4095.0) * 100;
+				smooth_speed = bigger(max_smooth_speed / 100 * percentage, 1);
+			}
+			HAL_ADC_Stop(&hadc1);
 		}
 
 		/* USER CODE END WHILE */
@@ -443,6 +469,63 @@ void SystemClock_Config(void)
 	/** Enable MSI Auto calibration
 	 */
 	HAL_RCCEx_EnableMSIPLLMode();
+}
+
+/**
+ * @brief ADC1 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_ADC1_Init(void)
+{
+
+	/* USER CODE BEGIN ADC1_Init 0 */
+
+	/* USER CODE END ADC1_Init 0 */
+
+	ADC_ChannelConfTypeDef sConfig = {0};
+
+	/* USER CODE BEGIN ADC1_Init 1 */
+
+	/* USER CODE END ADC1_Init 1 */
+
+	/** Common config
+	 */
+	hadc1.Instance = ADC1;
+	hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+	hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+	hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+	hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
+	hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+	hadc1.Init.LowPowerAutoWait = DISABLE;
+	hadc1.Init.ContinuousConvMode = DISABLE;
+	hadc1.Init.NbrOfConversion = 1;
+	hadc1.Init.DiscontinuousConvMode = DISABLE;
+	hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+	hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+	hadc1.Init.DMAContinuousRequests = DISABLE;
+	hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+	hadc1.Init.OversamplingMode = DISABLE;
+	if (HAL_ADC_Init(&hadc1) != HAL_OK)
+	{
+		Error_Handler();
+	}
+
+	/** Configure Regular Channel
+	 */
+	sConfig.Channel = ADC_CHANNEL_9;
+	sConfig.Rank = ADC_REGULAR_RANK_1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
+	sConfig.SingleDiff = ADC_SINGLE_ENDED;
+	sConfig.OffsetNumber = ADC_OFFSET_NONE;
+	sConfig.Offset = 0;
+	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+	{
+		Error_Handler();
+	}
+	/* USER CODE BEGIN ADC1_Init 2 */
+
+	/* USER CODE END ADC1_Init 2 */
 }
 
 /**

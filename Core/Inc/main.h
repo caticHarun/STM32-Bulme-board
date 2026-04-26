@@ -67,6 +67,8 @@ void Error_Handler(void);
 #define VCP_TX_GPIO_Port GPIOA
 #define A2_Button_Pin GPIO_PIN_3
 #define A2_Button_GPIO_Port GPIOA
+#define A3_Potenziometer_Pin GPIO_PIN_4
+#define A3_Potenziometer_GPIO_Port GPIOA
 #define LED_L7_Pin GPIO_PIN_7
 #define LED_L7_GPIO_Port GPIOA
 #define LED_L2_Pin GPIO_PIN_0
